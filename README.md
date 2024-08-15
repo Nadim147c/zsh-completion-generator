@@ -20,9 +20,9 @@ After installing antigen put `antigen bundle RobSis/zsh-completion-generator` in
 
 - Download the script or clone this repository:
 
-  `$ cd ~/.zsh/`
+  `cd ~/.zsh/`
 
-  `$ git clone git://github.com/RobSis/zsh-completion-generator.git`
+  `git clone git://github.com/RobSis/zsh-completion-generator.git`
 
 - Source the script **before compinit** in your `~/.zshrc`:
 
@@ -37,9 +37,10 @@ After installing antigen put `antigen bundle RobSis/zsh-completion-generator` in
 If you want to use a different folder than the default one for completion files, you can export the GENCOMPL_FPATH
 variable before sourcing the plugin :
 
-```
-$ GENCOMPL_FPATH=$HOME/.zsh/complete
-$ source $HOME/.zsh/zsh-completion-generator/zsh-completion-generator.plugin.zsh
+```bash
+export GENCOMPL_FPATH=$HOME/.zsh/complete
+# export GENCOMPL_FPATH="$ZINIT[COMPLETIONS_DIR]"
+source $HOME/.zsh/zsh-completion-generator/zsh-completion-generator.plugin.zsh
 ```
 
 #### Custom python version
@@ -48,8 +49,8 @@ If you want to use a specific Python interpreter name, you can export the GENCOM
 plugin :
 
 ```
-$ GENCOMPL_PY=python2
-$ source $HOME/.zsh/zsh-completion-generator/zsh-completion-generator.plugin.zsh
+GENCOMPL_PY=python2
+source $HOME/.zsh/zsh-completion-generator/zsh-completion-generator.plugin.zsh
 ```
 
 ## How to use
@@ -63,10 +64,12 @@ zstyle :plugin:zsh-completion-generator programs   ggrep tr cat
 The plugin will create completions for those programs at load time, once. You can also generate completions from the
 shell, by using provided `gencomp` function:
 
-```
-$ gencomp ggrep
-$ source ~/.zshrc # or run `compinit'
-$ ggrep -*[TAB]* -> magic
+```bash
+gencomp ggrep
+gencomp yt-dlp 'yt-dlp --help'
+rg --help | gencomp rg
+source ~/.zshrc # or run `compinit'
+ggrep -*[TAB]* -> magic
 ```
 
 ## Licence

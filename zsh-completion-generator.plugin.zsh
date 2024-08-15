@@ -21,7 +21,7 @@ fi
 # which python to use
 local python
 if [[ -z $GENCOMPL_PY ]]; then
-    python=python
+    python='python'
 else
     python=$GENCOMPL_PY
 fi
@@ -66,20 +66,30 @@ done
 # b) or use function in shell:
 gencomp() {
     if [[ -z "$1" || "$1" = "-h" || "$1" = "--help" ]]; then
-        echo "Usage: gencomp program [--argument-for-help-text]"
-        echo
+        echo "Usage: gencomp program '[command-for-help-text]'"
         return 1
     fi
 
-    local help=--help
+    local help_text
     if [[ -n "$2" ]]; then
-        help=$2
+        help_text="$(eval $2)"
+    elif [[ ! -t 0 ]]; then
+        help_text="$(cat)"
+    elif "$1" --help &>/dev/null; then
+        help_text="$($1 --help)"
+    else
+        echo "Usage: gencomp program '[command-for-help-text]'"
     fi
 
-    "$1" $help 2>&1 | $python $ZSH_COMPLETION_GENERATOR_SRCDIR/help2comp.py $1 >!\
+    if [[ -z "$help_text" ]]; then
+        echo "Failed to get help text.\nUsage: gencomp program '[command-for-help-text]'"
+        return 1
+    fi
+
+    echo "$help_text" | $python $ZSH_COMPLETION_GENERATOR_SRCDIR/help2comp.py $1 >!\
         $ZSH_COMPLETION_GENERATOR_DIR/_$1 || ( local code="${pipestatus[1]}"
                 command rm -f $ZSH_COMPLETION_GENERATOR_DIR/_$1 &&\
-                echo "No options found for '$1'. Was fetching from following invocation: \`$1 $help'."\
+                echo "No options found for '$1'. Was fetching from following invocation: \`${2:-'$1 --help'}'."\
                     "\nThe program reacted with exit code: $code."
             )
 }
